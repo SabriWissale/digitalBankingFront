@@ -1,0 +1,79 @@
+<div class="container mt-2">
+    <ng-container *ngIf="accountPage; else failureOrLading">
+      <div class="card">
+        <div class="card-header">Customers</div>
+        <div class="card-body">
+          <div *ngIf="searchFormGroup">
+            <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchAccounts()">
+              <div class="input-group">
+                <label class="input-group-text">Keyword :</label>
+                <input type="text" formControlName="keyword" class="form-control">
+                <button class="btn btn-primary">
+                  <i class="bi bi-search"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          <table class="table">
+            <thead>
+            <tr>
+              <th>ID</th><th>type</th><th>balance</th><th>creation date</th><th>owner name</th><th>interest</th><th>draft</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let c of accountPage.bankAccountDTOS">
+              <td>{{c.id}}</td>
+              <td>{{c.type}}</td>
+              <td>{{c.balance | number : '1.2-2'}}</td>
+              <td>{{c.createdAt | date : 'dd-MM-yyyy'}}</td>
+              <td>{{c.customerDTO.name}}</td>
+              <ng-container *ngIf="c.interestRate; else noInterest">
+                <td>{{c.interestRate}}</td>
+              </ng-container>
+              <ng-template #noInterest>
+                <td><i class="bi bi-bookmark-x-fill"></i></td>
+              </ng-template>
+    
+              <ng-container *ngIf="c.overDraft; else noDraft">
+                <td>{{c.overDraft}}</td>
+              </ng-container>
+              <ng-template #noDraft>
+                <td><i class="bi bi-bookmark-x-fill"></i></td>
+              </ng-template>
+
+              <td>
+                <button (click)="handleEditAccount(c)" class="btn btn-primary">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+              </td>
+
+              <td>
+                <button (click)="handleDeleteCustomer(c)" class="btn btn-danger">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+
+            </tr>
+            </tbody>
+          </table>
+          <ul class="nav nav-pills">
+            <li *ngFor="let item of [].constructor(accountPage.totalPages);let page=index">
+              <a [ngClass]="page==currentPage?'btn btn-primary':'btn-outline-primary'" (click)="gotoPage(page)" class="btn  ms-1 mt-1">{{page}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #failureOrLading>
+      <ng-container *ngIf="errorMessage; else loading">
+        <div class="text-danger">
+          {{errorMessage}}
+        </div>
+      </ng-container>
+      <ng-template #loading>
+        Loading .....
+      </ng-template>
+    </ng-template>
+  </div>
+  

@@ -1,0 +1,63 @@
+
+
+<div class="container mt-2">
+  <ng-container *ngIf="customerAccountsPage; else failureOrLading">
+    <div class="card">
+      <div class="card-header">Accounts of {{customer.name| json}}</div>
+      <div class="card-body">
+        
+        <table class="table">
+          <thead>
+          <tr>
+            <th>type</th><th>id</th><th>balance</th><th>interest rate</th><th>overDraft</th><th>Action</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let b of customerAccountsPage.bankAccountDTOS">
+            <td>{{b.type}}</td>
+            <td>{{b.id}}</td>
+            <td>{{b.balance | number : '1.2-2'}}</td>
+
+          <ng-container *ngIf="b.interestRate; else noInterest">
+            <td>{{b.interestRate}}</td>
+          </ng-container>
+          <ng-template #noInterest>
+            <td><i class="bi bi-bookmark-x-fill"></i></td>
+          </ng-template>
+
+          <ng-container *ngIf="b.overDraft; else noDraft">
+            <td>{{b.overDraft}}</td>
+          </ng-container>
+          <ng-template #noDraft>
+            <td><i class="bi bi-bookmark-x-fill"></i></td>
+          </ng-template>
+
+          <td>
+            <button (click)="handleAccountOperations(b.id)" class="btn btn-success">
+           check and manage operations
+            </button>
+          </td>
+        
+          </tr>
+          </tbody>
+        </table>
+        <ul class="nav nav-pills">
+          <li *ngFor="let item of [].constructor(customerAccountsPage.totalPages);let page=index">
+            <a [ngClass]="page==currentPage?'btn-primary':'btn-outline-primary'" (click)="gotoPage(page)" class="btn  ms-1 mt-1">{{page}}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #failureOrLading>
+    <ng-container *ngIf="errorMessage; else loading">
+      <div class="text-danger">
+        {{errorMessage}}
+      </div>
+    </ng-container>
+    <ng-template #loading>
+      Loading .....
+    </ng-template>
+  </ng-template>
+</div>
+
